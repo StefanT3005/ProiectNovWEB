@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Acasa</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            background: #1e1e1e;
+            padding: 15px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 8px 12px;
+        }
+
+        .navbar a:hover {
+            background: #333333;
+            border-radius: 4px;
+        }
+
+        .content {
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <a href="home.php">Acasa</a>
+        <a href="vizualizare.php">Vizualizare Produse</a>
+        <a href="index.php">Adaugare Produse In Cos</a>
+        <a href="cart.php">Cos Cumparaturi</a>
+        <a href="logout.php">Logout</a>
+    </div>
+
+    <div class="content">
+        <h2>Alege produsele dorite!</h2>
+    </div>
+
+</body>
+
+</html>
+
+<?php
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
+
+require_once 'DBController.php';
+$db = new DBController();
+// preluăm produsele din baza de date
+$products = $db->getDBResult("SELECT * FROM tbl_product");
+echo "<h1>Produse disponibile</h1>";
+echo "<ul>";
+foreach ($products as $product) {
+    echo "<li>" . htmlspecialchars($product['name']) . " - $" . htmlspecialchars($product['price'])
+        . " <a href='addToCart.php?product_id=" . $product['id'] . "'>Adaugă în coș</a></li>";
+}
+echo "</ul>";
