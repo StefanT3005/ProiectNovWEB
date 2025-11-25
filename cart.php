@@ -62,6 +62,7 @@ $cart_items = $db->getDBResult(
         <a href="index.php">Adaugare Produse In Cos</a>
         <a href="cart.php">Cos Cumparaturi</a>
         <a href="logout.php">Logout</a>
+        <a href="register.php">Register</a>
     </div>
 
     <div class="content">

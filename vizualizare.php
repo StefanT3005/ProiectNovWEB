@@ -1,3 +1,26 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit;
+}
+
+include("Conectare.php");
+$isAdmin = false; // Default to not admin
+try {
+    $stmt_user = $pdo->prepare("SELECT is_admin FROM users WHERE id = ?");
+    $stmt_user->execute([$_SESSION['user_id']]);
+    $user = $stmt_user->fetch(PDO::FETCH_ASSOC);
+
+    if ($user && $user['is_admin'] == 1) {
+        $isAdmin = true;
+    }
+} catch (PDOException $e) {
+    die("Eroare la verificarea utilizatorului: " . $e->getMessage());
+}
+?>
+
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 
@@ -46,6 +69,7 @@
         <a href="index.php">Adaugare Produse In Cos</a>
         <a href="cart.php">Cos Cumparaturi</a>
         <a href="logout.php">Logout</a>
+        <a href="register.php">Register</a>
     </div>
 
 
@@ -54,7 +78,7 @@
 
     <?php
     // conectare bază de date
-    include("Conectare.php");
+    // include("Conectare.php");
 
     try {
         // se preiau inregistrarile din baza de date
@@ -63,7 +87,8 @@
         if ($stmt->rowCount() > 0) {
 
             echo "<table border='1' cellpadding='10'>";
-            echo "<tr>
+            if ($isAdmin) {
+                echo "<tr>
                     <th>ID</th>
                     <th>Nume Produs</th>
                     <th>Cod Produs</th>
@@ -72,6 +97,15 @@
                     <th></th>
                     <th></th>
                   </tr>";
+            } else {
+                echo "<tr>
+                    <th>ID</th>
+                    <th>Nume Produs</th>
+                    <th>Cod Produs</th>
+                    <th>Imagine</th>
+                    <th>Pret</th>
+                  </tr>";
+            }
 
             while ($row = $stmt->fetch(PDO::FETCH_OBJ)) {
                 echo "<tr>";
@@ -80,8 +114,12 @@
                 echo "<td>" . htmlspecialchars($row->code) . "</td>";
                 echo "<td><img src='" . htmlspecialchars($row->image) . "' alt='Imagine' width='100'></td>";
                 echo "<td>" . htmlspecialchars($row->price) . "</td>";
-                echo "<td><a href='Modificare.php?id=" . htmlspecialchars($row->id) . "'>Modificare</a></td>";
-                echo "<td><a href='Stergere.php?id=" . htmlspecialchars($row->id) . "'>Stergere</a></td>";
+                if ($isAdmin) {
+                    echo "<td><a href='Modificare.php?id=" . htmlspecialchars($row->id) . "'>Modificare</a></td>";
+                    echo "<td><a href='Stergere.php?id=" . htmlspecialchars($row->id) . "'>Stergere</a></td>";
+                } else {
+                    echo "";
+                }
                 echo "</tr>";
             }
 
@@ -92,20 +130,14 @@
     } catch (PDOException $e) {
         echo "Eroare la interogare: " . htmlspecialchars($e->getMessage());
     }
+    echo '<br><br>';
+    if ($isAdmin) {
+        echo '<a href="Inserare.php">Adaugarea unei noi inregistrari</a>';
+        echo '<br><br><br><br><br>';
+    }
     ?>
 
-    <br><br>
-    <a href="Inserare.php">Adaugarea unei noi inregistrari</a>
 
 </body>
 
 </html>
-
-<?php
-session_start();
-
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit;
-}
-?>

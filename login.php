@@ -42,6 +42,7 @@
         <a href="index.php">Adaugare Produse In Cos</a>
         <a href="cart.php">Cos Cumparaturi</a>
         <a href="logout.php">Logout</a>
+        <a href="register.php">Register</a>
     </div>
 
     <div class="content">
@@ -63,6 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user = $db->getDBResult($query, [$username]);
     if ($user && password_verify($password, $user[0]['password'])) {
         $_SESSION['user_id'] = $user[0]['id'];
+
         header("Location: home.php");
         exit;
     } else {

@@ -15,7 +15,7 @@ try {
     // Setează modul de raportare a erorilor
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    echo 'Conectat la baza de date: ' . $db;
+    // echo 'Conectat la baza de date: ' . $db;
 
     // Aici poți adăuga cod suplimentar pentru manipularea bazei de date
 } catch (PDOException $e) {
